@@ -1,0 +1,75 @@
+# ============================================================
+# Hermes Agent 推荐配置 —— 手机远程控制电脑
+# ============================================================
+# 复制到 ~/.hermes/config.yaml，替换 <PLACEHOLDER> 为你的实际值
+# 文档: https://hermes-agent.nousresearch.com/docs
+
+# ── 模型 ────────────────────────────────────────────────────
+model:
+  default: <YOUR_MODEL>          # 例: mimo-v2.5-pro / claude-sonnet-4-6
+  provider: <YOUR_PROVIDER>      # 例: xiaomi / anthropic / openrouter
+  only_configured_provider: false
+
+providers:
+  # 主力 provider
+  main:
+    name: <YOUR_PROVIDER_NAME>
+    base_url: <YOUR_BASE_URL>
+    key_env: <YOUR_KEY_ENV>       # 环境变量名，如 ANTHROPIC_API_KEY
+    transport: chat_completions
+    default_model: <YOUR_MODEL>
+    models:
+      - <YOUR_MODEL>
+
+# ── Agent ───────────────────────────────────────────────────
+agent:
+  max_turns: 90
+  gateway_timeout: 1800
+  api_max_retries: 3
+  tool_use_enforcement: auto
+  image_input_mode: auto
+
+# ── 终端 ────────────────────────────────────────────────────
+terminal:
+  backend: local
+  persistent_shell: true
+  timeout: 180
+
+# ── 浏览器 ──────────────────────────────────────────────────
+browser:
+  inactivity_timeout: 120
+  command_timeout: 30
+  engine: auto
+  dialog_policy: must_respond
+
+# ── 审批（关键！手机控制必须改 auto）──────────────────────
+approvals:
+  mode: auto                     # ← 核心：自动批准命令
+  timeout: 60
+  cron_mode: deny
+  mcp_reload_confirm: true
+  destructive_slash_confirm: true
+
+# ── 安全 ────────────────────────────────────────────────────
+security:
+  allow_private_urls: false
+  redact_secrets: true
+  tirith_enabled: false          # ← 关闭安全扫描，减少审批弹窗
+  tirith_fail_open: true
+
+# ── 工具集 ──────────────────────────────────────────────────
+toolsets:
+  - hermes-cli
+
+# ── MCP（可选）──────────────────────────────────────────────
+# mcp:
+#   servers:
+#     your-server:
+#       command: npx
+#       args: ["-y", "your-mcp-server"]
+
+# ── 记忆 ────────────────────────────────────────────────────
+checkpoints:
+  enabled: true
+  max_snapshots: 50
+  retention_days: 7
