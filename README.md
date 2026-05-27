@@ -2,18 +2,19 @@
 
 **手机 → Hermes Agent → 电脑全栈控制**
 
-通过微信/Telegram 发消息，在 Mac 上远程执行命令、写代码、管理文件、操控浏览器。
+通过微信/Telegram 发消息，在 Mac 上远程执行命令、写代码、管理文件、操控浏览器、查看桌面截图。
 
 ## 它能做什么
 
 | 能力 | 示例 |
 |------|------|
-| 文件读写 | "帮我看看 ~/Desktop 下有什么文件" |
-| 终端命令 | "跑一下 npm test" |
-| Claude Code 调用 | "让 Claude Code 帮我重构这个函数" |
-| 浏览器操控 | "打开 X 帮我存个草稿" |
-| AI 润色 | "帮我润色一下这段文字发推" |
-| 定时任务 | "每天早上 9 点给我发个日报" |
+| 🖥️ 远程截图 | "看看电脑"、"看看进度" |
+| 📁 文件读写 | "帮我看看 ~/Desktop 下有什么文件" |
+| ⌨️ 终端命令 | "跑一下 npm test" |
+| 🤖 Claude Code 调用 | "让 Claude Code 帮我重构这个函数" |
+| 🌐 浏览器操控 | "打开 X 帮我存个草稿" |
+| ✍️ AI 润色 | "帮我润色一下这段文字发推" |
+| ⏰ 定时任务 | "每天早上 9 点给我发个日报" |
 
 ## 架构
 
@@ -22,6 +23,7 @@
     │
     ▼
 Hermes Agent（你的 Mac）
+    ├── 截图（screencapture → 微信发回）
     ├── 文件系统（读写、编辑）
     ├── 终端（任意命令）
     ├── Claude Code（远程调用）
@@ -57,9 +59,41 @@ vim ~/.hermes/config.yaml
 hermes setup weixin
 ```
 
-### 4. 开始使用
+### 4. 安装 Skills
+
+```bash
+# 复制 skill 到 Hermes 目录
+cp -r skills/* ~/.hermes/skills/
+```
+
+### 5. 开始使用
 
 在微信发消息给 Hermes，它会在你的 Mac 上执行。
+
+## 远程截图
+
+手机发"看看"、"看看电脑"、"看看进度"，Hermes 自动截取 Mac 桌面并通过微信发回。
+
+```
+你：看看电脑
+Hermes：📸 [桌面截图]
+```
+
+截图 10 分钟后自动删除，不占空间。
+
+需要 macOS 屏幕录制权限（系统设置 → 隐私与安全性 → 屏幕录制 → 添加 Terminal）。
+
+## Skills（技能）
+
+把常用工作流封装成 skill，一条指令触发：
+
+| Skill | 用途 |
+|-------|------|
+| `remote-screenshot` | 远程截图：手机发"看看"即可看到桌面 |
+| `x-draft-onestep` | 推特草稿一键流：润色→备份→存草稿箱 |
+| `x-post-polisher` | 推文润色，匹配账号人设 |
+| `claude-code-remote` | 远程调用 Claude Code CLI |
+| `viral-content-rewrite` | 爆款拆解改写 |
 
 ## 推荐配置（关键项）
 
@@ -82,24 +116,6 @@ terminal:
 
 完整配置见 `config.template.yaml`。
 
-## Skills（技能）
-
-把常用工作流封装成 skill，一条指令触发：
-
-| Skill | 用途 |
-|-------|------|
-| `x-draft-onestep` | 推特草稿一键流：润色→备份→存草稿箱 |
-| `x-post-polisher` | 推文润色，匹配账号人设 |
-| `claude-code-remote` | 远程调用 Claude Code CLI |
-| `viral-content-rewrite` | 爆款拆解改写 |
-
-### 安装 skill
-
-```bash
-# 复制 skill 到 Hermes 目录
-cp -r skills/* ~/.hermes/skills/
-```
-
 ## 安全边界
 
 - **自动执行** = Hermes 决定跑什么命令
@@ -108,7 +124,7 @@ cp -r skills/* ~/.hermes/skills/
 
 ## 前置条件
 
-- macOS（已测试 Mac Mini M2 16GB）
+- macOS（已测试 Mac Mini M4 16GB）
 - Hermes Agent
 - Python 3.11+
 - Playwright（浏览器自动化用）
